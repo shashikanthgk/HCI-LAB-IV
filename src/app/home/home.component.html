@@ -1,0 +1,87 @@
+<div *ngIf="!isDivVisible" style="display: flex;flex-direction: column;align-items: center;justify-content: center;">
+    <div class="inst" style="width: 60%;">
+        <!-- instruction for the user  -->
+        <ul>
+            <li>
+                Click on this circle the moment you see it based on the given instruction
+            </li>
+            <li>
+                Try to remember set visually and mentally
+            </li>
+            <li>
+                Another circle with random size, color and position will appear on the screen.
+            </li>
+            <li>
+                Click on this next circle the moment you see it
+            </li>
+            <li>
+                Repeat steps 3 and 4 as long as circles are displayed.
+            </li>
+
+        </ul>
+    </div>
+    <div>
+        <button style="margin: 2rem;" (click)="start_game()" class="button2"><span>START
+            </span></button>
+    </div>
+</div>
+
+<div [style.visibility]="isDivVisible ? 'visible' : 'hidden'"
+    style="display: flex;flex-direction: column;align-items:center;justify-content: space-evenly;">
+    <div style="color: indigo;font-weight: bolder;">
+        <h2>Trial No : {{trianno}}/30</h2>
+    </div>
+    <div *ngIf="!restart">
+        <h2>{{question}}</h2>
+    </div>
+    <div>
+        <h1 *ngIf="restart">
+            Graph For Radius Vs Time
+        </h1>
+    </div>
+    <div>
+        <canvas style="background-color: whitesmoke" #canvas width="1000vw" height="450vh"></canvas>
+    </div>
+    <div>
+        <h1 *ngIf="restart">
+            Graph For Distance Vs Time
+        </h1>
+    </div>
+    <div [style.visibility]="restart ? 'visible' : 'hidden'">
+        <canvas style="background-color: whitesmoke" #canvas2 width="1000vw" height="450vh"></canvas>
+    </div>
+    <div *ngIf="restart">
+        <h1>
+            Table for Distance, Time, Radius
+        </h1>
+    </div>
+    <div *ngIf="restart">
+        <table>
+            <tr>
+                <th>
+                    Radius
+                </th>
+                <th>
+                    Distance
+                </th>
+                <th>
+                    Time Taken
+                </th>
+                <th>
+                    UI elements
+                </th>
+            </tr>
+            <tr *ngFor="let data of DataSource">
+                <td>{{data.radius}}</td>
+                <td>{{data.distance}}</td>
+                <td>{{data.time}}</td>
+                <td>{{data.elements}}</td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <button *ngIf="restart" style="margin: 2rem;" (click)="restart_()" class="button2"><span>RESTART
+            </span></button>
+    </div>
+
+</div>
