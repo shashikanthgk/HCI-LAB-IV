@@ -50,14 +50,26 @@
     <div [style.visibility]="restart ? 'visible' : 'hidden'">
         <canvas style="background-color: whitesmoke" #canvas2 width="1000vw" height="450vh"></canvas>
     </div>
+    <div>
+        <h1 *ngIf="restart">
+            Final Graph For Hick-Hayman's Law
+        </h1>
+    </div>
+    <div [style.visibility]="restart ? 'visible' : 'hidden'">
+        <canvas style="background-color: whitesmoke" #canvas3 width="1000vw" height="450vh"></canvas>
+    </div>
     <div *ngIf="restart">
         <h1>
-            Table for Distance, Time, Radius
+            Table for Time Taken and Number Of UI elements
         </h1>
     </div>
     <div *ngIf="restart">
         <table>
             <tr>
+
+                <th>
+                    Number Of UI elements
+                </th>
                 <th>
                     Radius
                 </th>
@@ -67,15 +79,13 @@
                 <th>
                     Time Taken
                 </th>
-                <th>
-                    UI elements
-                </th>
             </tr>
             <tr *ngFor="let data of DataSource">
+                <td>{{data.elements}}</td>
                 <td>{{data.radius}}</td>
                 <td>{{data.distance}}</td>
                 <td>{{data.time}}</td>
-                <td>{{data.elements}}</td>
+
             </tr>
         </table>
     </div>

@@ -9,7 +9,9 @@ export class HomeComponent implements OnInit {
   @ViewChild('canvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('canvas2', { static: true })
-  canvas2: ElementRef<HTMLCanvasElement>;  
+  canvas2: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvas3', { static: true })
+  canvas3: ElementRef<HTMLCanvasElement>;
   ctx = null
   color = ['red', 'blue', 'green', 'yellow', 'orange', 'black', 'cyan', 'purple', 'pink', 'skyblue', 'tomato', 'springgreen']
   constructor() { }
@@ -35,9 +37,8 @@ export class HomeComponent implements OnInit {
     // this.start_game()
   }
 
-  euclidean(c1,c2)
-  {
-    return Math.sqrt(Math.pow(c1.x-c2.x,2)+Math.pow(c1.y-c2.y,2));
+  euclidean(c1, c2) {
+    return Math.sqrt(Math.pow(c1.x - c2.x, 2) + Math.pow(c1.y - c2.y, 2));
   }
 
   randomInteger(min, max) {
@@ -52,38 +53,38 @@ export class HomeComponent implements OnInit {
       var y = event.y - rect.top;
       this.elements.forEach((ele) => {
         if (this.check_a_point(x, y, ele.x, ele.y, ele.r) && ele == this.current_circle) {
-            console.log(ele,this.current_circle)
-          if (this.trianno >=29) {
+          if (this.trianno >=29 ) {
             this.drawgraph();
           }
           var context = this.canvas.nativeElement.getContext('2d');
           this.clearCanvas(context, this.ctx.canvas);
           if (!this.start) {
             this.start = Date.now()
-            this.start_dist = {x:x,y:y}
+            this.start_dist = { x: x, y: y }
           }
           else {
             this.end = Date.now()
-            this.end_dist = {x:x,y:y}
+            this.end_dist = { x: x, y: y }
             if (this.statistics[ele.r]) {
               this.statistics[ele.r].push(this.end - this.start)
-              this.stat_dist[ele.r].push(this.euclidean(this.end_dist,this.start_dist))
-              this.number_circle.push(this.circles.length)
+              this.stat_dist[ele.r].push(this.euclidean(this.end_dist, this.start_dist))
+              this.number_circle.push({"number":this.circles.length,"time":this.end - this.start,"radius":ele.r,"dist":this.euclidean(this.end_dist, this.start_dist)})
             }
             else {
               this.statistics[ele.r] = []
               this.stat_dist[ele.r] = []
               this.statistics[ele.r].push(this.end - this.start)
-              this.stat_dist[ele.r].push(this.euclidean(this.end_dist,this.start_dist))
-              this.number_circle.push(this.circles.length)
+              this.stat_dist[ele.r].push(this.euclidean(this.end_dist, this.start_dist))
+              this.number_circle.push({"number":this.circles.length,"time":this.end - this.start,"radius":ele.r,"dist":this.euclidean(this.end_dist, this.start_dist)})
+
             }
           }
 
           this.elements = []
           this.circles = []
-          let NumCircles = this.randomInteger(3,15),
+          let NumCircles = this.randomInteger(3, 30),
             protection = 100000;
-           let counter = 0;
+          let counter = 0;
           while (this.circles.length < NumCircles && counter < protection) {
             counter++;
             let width = 900
@@ -126,34 +127,27 @@ export class HomeComponent implements OnInit {
 
 
     let cir = this.randomInteger(0, this.circles.length - 1)
-    
+
     let color = this.circles[cir].c
 
     let got_color = []
-    for(let i = 0;i<this.circles.length;i++)
-    {
-      if(this.circles[i].c == color)
-      {
-        got_color.push({"index" :i,"color":cir,"radius":this.circles[i].r});
+    for (let i = 0; i < this.circles.length; i++) {
+      if (this.circles[i].c == color) {
+        got_color.push({ "index": i, "color": cir, "radius": this.circles[i].r });
       }
     }
-    if(got_color.length == 1)
-    {
+    if (got_color.length == 1) {
       this.current_circle = this.circles[got_color[0].index]
       this.question = `Select the ${this.color[this.circles[got_color[0]['index']].c]} colred circle`
     }
-    else
-    {
-      let size = this.randomInteger(0,1);
-      if(size == 0)
-      {
+    else {
+      let size = this.randomInteger(0, 1);
+      if (size == 0) {
         //small index
         let min_index = 0;
 
-        for(let i = 1;i<got_color.length;i++)
-        {
-          if(got_color[i].radius<got_color[min_index].radius)
-          {
+        for (let i = 1; i < got_color.length; i++) {
+          if (got_color[i].radius < got_color[min_index].radius) {
             min_index = i
           }
         }
@@ -161,15 +155,12 @@ export class HomeComponent implements OnInit {
         this.question = `Select the ${this.color[this.current_circle.c]} colred small circle`
 
       }
-      else
-      {
+      else {
         // big index
         let max_index = 0;
 
-        for(let i = 1;i<got_color.length;i++)
-        {
-          if(got_color[i].radius>got_color[max_index].radius)
-          {
+        for (let i = 1; i < got_color.length; i++) {
+          if (got_color[i].radius > got_color[max_index].radius) {
             max_index = i
           }
         }
@@ -214,7 +205,6 @@ export class HomeComponent implements OnInit {
     context.clearRect(0, 0, canvas.width, canvas.height);
   }
   drawgraph() {
-    console.log(this.statistics)
     let avg = {}
     let avg_dist = {}
     let x = []
@@ -229,7 +219,7 @@ export class HomeComponent implements OnInit {
       avg[key] = sum
       x.push(key)
       y.push(avg[key])
-      data.push({x:key,y:sum})
+      data.push({ x: key, y: sum })
 
     }
 
@@ -244,32 +234,77 @@ export class HomeComponent implements OnInit {
       }
       sum2 = sum2 / this.stat_dist[key].length
       avg_dist[key] = sum2
-      data2.push({x:avg_dist[key],y:avg[key]})
+      data2.push({ x: avg_dist[key], y: avg[key] })
 
     }
 
     let distancedata = data2.sort((a, b) => b.x - a.x);
-    
-    for(let i = 0;i<distancedata.length;i++)
-    {
+
+    for (let i = 0; i < distancedata.length; i++) {
       x2.push(parseInt(distancedata[i].x))
       y2.push((distancedata[i].y))
     }
+   
+    let thisdata = this.number_circle.sort((a,b)=>a.number-b.number)
 
 
 
-    for(let i = 0;i<distancedata.length;i++)
-    {
+    for (let i = 0; i < this.number_circle.length; i++) {
       var m = {
-        "radius":x[i],
-        "time":y[i].toFixed(2),
-        "distance":y2[i].toFixed(2),
-        "elements":this.number_circle[i]
+        "time":this.number_circle[i].time,
+        "elements": this.number_circle[i].number,
+        "radius":this.number_circle[i].radius,
+        "distance":this.number_circle[i].dist
       }
       this.DataSource.push(m)
     }
 
-   
+    console.log("thisdata",thisdata)
+    var temp = []
+    let note;
+    for(let i = 0;i<thisdata.length;i++)
+    {
+      if(i<=note)
+      continue
+      var sh = {
+        "time":thisdata[i].time,
+        "elements":thisdata[i].number,
+        "radius":thisdata[i].radius,
+        "distance":thisdata[i].dist
+      }
+      let count = 1
+      for(let j = i+1;j<thisdata.length;j++)
+      {
+        if(thisdata[j].number == thisdata[i].number)
+        {
+          sh.time += thisdata[j].time;
+          sh.radius += thisdata[j].radius;
+          sh.distance += thisdata[j].dist
+          count++;
+          note = j;
+        }
+      }
+      console.log(sh,count)
+      sh.time = sh.time/count
+      sh.radius = sh.radius/count
+      sh.distance = sh.distance/count
+      temp.push(sh)
+    }
+
+    let data_ = temp.sort((a,b)=>a.elements-b.elements)
+
+
+    console.log("temp",data_)
+    let x4 = []
+    let y4 = []
+    for (let i = 0; i < data_.length; i++) {
+      y4.push(Math.log2(data_[i].elements+1).toFixed(2))
+      x4.push(data_[i].time)
+    }
+
+    console.log("x4",x4)
+    console.log("y4",y4)
+
     var ctx = this.canvas.nativeElement.getContext('2d')
 
     this.Linearchart = new Chart(ctx, {
@@ -281,7 +316,7 @@ export class HomeComponent implements OnInit {
             data: y,
             borderColor: '#3cb371',
             backgroundColor: "gray",
-            fill:false,
+            fill: false,
             label: 'Radius Vs Time',
 
           }
@@ -300,7 +335,7 @@ export class HomeComponent implements OnInit {
               labelString: 'Radius'
             },
           },
-        ],
+          ],
           yAxes: [{
             display: true,
             scaleLabel: {
@@ -324,7 +359,7 @@ export class HomeComponent implements OnInit {
             data: y2,
             borderColor: 'red',
             backgroundColor: "gray",
-            fill:false,
+            fill: false,
             label: 'Distance Vs Time',
 
           }
@@ -333,16 +368,16 @@ export class HomeComponent implements OnInit {
       options: {
         plugins: {
           legend: {
-              display: true,
-              labels: {
-                  color: 'rgb(255, 99, 132)',
-                  title:{
-                    display:true,
-                    text:"ajhagu"
-                  }
+            display: true,
+            labels: {
+              color: 'rgb(255, 99, 132)',
+              title: {
+                display: true,
+                text: "ajhagu"
               }
+            }
           }
-      },
+        },
         scales: {
           xAxes: [{
             display: true,
@@ -351,7 +386,7 @@ export class HomeComponent implements OnInit {
               labelString: 'Distance'
             },
           },
-        ],
+          ],
           yAxes: [{
             display: true,
             scaleLabel: {
@@ -362,17 +397,64 @@ export class HomeComponent implements OnInit {
         }
       }
     });
-    console.log(this.statistics,this.stat_dist)
+    var ctx3 = this.canvas3.nativeElement.getContext('2d')
 
+    this.Linearchart2 = new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: y4,
+        datasets: [
+          {
+            data: x4,
+            borderColor: 'red',
+            backgroundColor: "gray",
+            fill: false,
+            label: 'UI elements Vs Time Taken',
+
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              color: 'rgb(255, 99, 132)',
+              title: {
+                display: true,
+                text: "ajhagu"
+              }
+            }
+          }
+        },
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'logarithm Of Number Of UI elements'
+            },
+          },
+          ],
+          yAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Time'
+            },
+          }],
+        }
+      }
+    });
   }
 
 
 
   start_game() {
     this.isDivVisible = true;
-    let NumCircles =  this.randomInteger(3,15),    
+    let NumCircles = this.randomInteger(3, 30),
       protection = 100000;
-        let counter = 0
+    let counter = 0
     while (this.circles.length < NumCircles && counter < protection) {
       counter++;
       let width = 900
@@ -393,7 +475,6 @@ export class HomeComponent implements OnInit {
           break;
         }
       }
-
       if (!overlapping) {
         this.circles.push(circle);
       }
@@ -409,8 +490,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  restart_()
-  {
+  restart_() {
     window.location.reload()
   }
 
