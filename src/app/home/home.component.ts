@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
       var y = event.y - rect.top;
       this.elements.forEach((ele) => {
         if (this.check_a_point(x, y, ele.x, ele.y, ele.r) && ele == this.current_circle) {
-          if (this.trianno >=29 ) {
+          if (this.trianno >=19 ) {
             this.drawgraph();
           }
           var context = this.canvas.nativeElement.getContext('2d');
